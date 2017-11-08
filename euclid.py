@@ -69,7 +69,7 @@ import os
 import glob
 import random
 
-    
+
 # Usage
 USAGE = " \
 1. Select a Directory of images in bottom control panel \n \
@@ -89,59 +89,59 @@ CLASSES = ['Class0', 'Class1', 'Class2', 'Class3', 'Class4', 'Class5', 'Class6',
 
 class Euclid():
 
-    #set class label 
+    #set class label
     def setClass0(self):
         self.currClassLabel=0;
         self.currClassLabelDisplayString.set('Current Class = 0')
     def setClass1(self):
         self.currClassLabel=1;
-        self.currClassLabelDisplayString.set('Current Class = 1')        
+        self.currClassLabelDisplayString.set('Current Class = 1')
     def setClass2(self):
         self.currClassLabel=2;
-        self.currClassLabelDisplayString.set('Current Class = 2')        
+        self.currClassLabelDisplayString.set('Current Class = 2')
     def setClass3(self):
         self.currClassLabel=3;
-        self.currClassLabelDisplayString.set('Current Class = 3')                
+        self.currClassLabelDisplayString.set('Current Class = 3')
     def setClass4(self):
         self.currClassLabel=4;
         self.currClassLabelDisplayString.set('Current Class = 4')
     def setClass5(self):
         self.currClassLabel=5;
-        self.currClassLabelDisplayString.set('Current Class = 5')        
+        self.currClassLabelDisplayString.set('Current Class = 5')
     def setClass6(self):
         self.currClassLabel=6;
-        self.currClassLabelDisplayString.set('Current Class = 6')        
+        self.currClassLabelDisplayString.set('Current Class = 6')
     def setClass7(self):
         self.currClassLabel=7;
-        self.currClassLabelDisplayString.set('Current Class = 7')        
+        self.currClassLabelDisplayString.set('Current Class = 7')
     def setClass8(self):
         self.currClassLabel=8;
-        self.currClassLabelDisplayString.set('Current Class = 8')        
+        self.currClassLabelDisplayString.set('Current Class = 8')
     def setClass9(self):
         self.currClassLabel=9;
-        self.currClassLabelDisplayString.set('Current Class = 9')    
+        self.currClassLabelDisplayString.set('Current Class = 9')
     def setClass10(self):
         self.currClassLabel=10;
-        self.currClassLabelDisplayString.set('Current Class = 10')          
+        self.currClassLabelDisplayString.set('Current Class = 10')
     def setClass11(self):
         self.currClassLabel=11;
-        self.currClassLabelDisplayString.set('Current Class = 11')          
+        self.currClassLabelDisplayString.set('Current Class = 11')
     def setClass12(self):
         self.currClassLabel=12;
-        self.currClassLabelDisplayString.set('Current Class = 12')          
+        self.currClassLabelDisplayString.set('Current Class = 12')
     def setClass13(self):
         self.currClassLabel=13;
-        self.currClassLabelDisplayString.set('Current Class = 13')          
+        self.currClassLabelDisplayString.set('Current Class = 13')
     def setClassN(self, N):
         self.currClassLabel=N;
-        self.currClassLabelDisplayString.set('Current Class = '+ str(N))  
+        self.currClassLabelDisplayString.set('Current Class = '+ str(N))
 
     def askDirectory(self):
       self.imageDir = tkFileDialog.askdirectory()
       self.SavePathToConfig(self.imageDir)
       self.entry.insert(0, self.imageDir)
       self.loadDir(self)
-        
+
     def SavePathToConfig(self, newPath):
         #config file
         configFile = open(os.path.join(sys.path[0], "euclidconfig.txt"), "a+")
@@ -160,23 +160,24 @@ class Euclid():
         trainfile = open(os.path.join(sys.path[0], "train.txt"), "a+")
         trainfile.write(newFile + "\n")
         trainfile.close()
-        
+
     def TestClassEntry(self,inStr,i,acttyp):
         ind=int(i)
         if acttyp == '1': #insert
             if not inStr[ind].isdigit():
                 return False
-        
+
         self.setClassN(int(inStr))
         return True
 
 
     def loadDir(self, dbg = False):
         self.imageDir = self.entry.get()
+        print(self.imageDir)
         self.parent.focus()
         if not os.path.isdir(self.imageDir):
             tkMessageBox.showerror("Folder error", message = "The specified directory doesn't exist!")
-            return        
+            return
         self.SavePathToConfig(self.imageDir)
          #get image list
         imageFileTypes = ('*.JPEG', '*.JPG', '*.PNG') # the tuple of file types
@@ -185,7 +186,7 @@ class Euclid():
             self.imageList.extend(glob.glob(os.path.join(self.imageDir, files.lower())) )
             if (False == self.is_windows):
                 self.imageList.extend(glob.glob(os.path.join(self.imageDir, files)) )
-            
+
         if len(self.imageList) == 0:
             tkMessageBox.showerror("File not found", message = "No images (png, jpeg, jpg) found in folder!")
             self.updateStatus( 'No image files found in the specified dir!')
@@ -197,6 +198,7 @@ class Euclid():
         # default to the 1st image in the collection
         self.cur = 1
         self.total = len(self.imageList)
+        self.imageList.sort()
 
          # set up output dir
         self.outDir = os.path.join(self.imageDir + '/LabelData')
@@ -206,7 +208,7 @@ class Euclid():
         self.updateStatus( '%d images loaded from %s' %(self.total, self.imageDir))
         self.loadImageAndLabels()
 
-        
+
     def __init__(self, master):
         # set up the main frame
         self.parent = master
@@ -238,7 +240,7 @@ class Euclid():
 
         #colors
         self.redColor = self.blueColor = self.greenColor = 128
-        
+
         # reference to bbox
         self.bboxIdList = []
         self.bboxId = None
@@ -255,11 +257,11 @@ class Euclid():
         self.imagePanelFrame.grid(row = 0, column = 0, rowspan = 4, padx = 5, sticky = W+N)
 
         self.imageLabel = Label(self.imagePanelFrame, text = 'Image View')
-        self.imageLabel.grid(row = 0, column = 0,  sticky = W+N)        
+        self.imageLabel.grid(row = 0, column = 0,  sticky = W+N)
         self.mainPanel = Canvas(self.imagePanelFrame, cursor='tcross', borderwidth=2, background='light blue')
         self.mainPanel.bind("<Button-1>", self.mouseClick)
         self.mainPanel.bind("<Motion>", self.mouseMove)
-        self.parent.bind("n", self.nextImage)    
+        self.parent.bind("n", self.nextImage)
         self.parent.bind("x", self.selectPointXY)
         self.parent.bind("<Escape>", self.cancelBBox)  # press <Escape> to cancel current bbox
         self.parent.bind("<F1>", self.showHelp)  # press <F1> to show help
@@ -282,7 +284,7 @@ class Euclid():
 
 	    #Class labels selection
         # control panel for label navigation
-        CLASSHANDLERS = [self.setClass0, self.setClass1, self.setClass2, self.setClass3, self.setClass4, 
+        CLASSHANDLERS = [self.setClass0, self.setClass1, self.setClass2, self.setClass3, self.setClass4,
                 self.setClass5, self.setClass6, self.setClass7, self.setClass8, self.setClass9, self.setClass10, self.setClass11, self.setClass12, self.setClass13]
 
         self.labelControlPanelFrame = Frame(self.frame)
@@ -303,7 +305,7 @@ class Euclid():
         self.currClassLabelDisplayString = StringVar()
         self.currClassLabelDisplayString.set('Current Class = 0')
         self.currClassLabelDisplay = Label(self.labelControlPanelFrame, textvariable = self.currClassLabelDisplayString)
-        self.currClassLabelDisplay.grid(row = 2+count, column = 0, sticky = W+E+N)            
+        self.currClassLabelDisplay.grid(row = 2+count, column = 0, sticky = W+E+N)
 
         # dir entry & load File control panel
         self.FileControlPanelFrame = Frame(self.frame)
@@ -311,27 +313,27 @@ class Euclid():
 
         self.FileControlPanelLabel = Label(self.FileControlPanelFrame, text = '1. Select a directory (or) Enter input path, and click Load')
         self.FileControlPanelLabel.grid(row = 0, column = 0,  sticky = W+N)
-        
+
         self.browserBtn = Button(self.FileControlPanelFrame, text = "Select Dir", command = self.askDirectory)
-        self.browserBtn.grid(row = 1, column = 0, sticky = N)        
-        
+        self.browserBtn.grid(row = 1, column = 0, sticky = N)
+
         self.entry = Entry(self.FileControlPanelFrame)
         self.entry.grid(row = 1, column = 1, sticky = N)
         self.ldBtn = Button(self.FileControlPanelFrame, text = "Load", command = self.loadDir)
         self.ldBtn.grid(row = 1, column = 2, sticky = N)
-        
+
         self.FormatLabel = Label(self.FileControlPanelFrame, text = '2. Format Selection')
         self.FormatLabel.grid(row = 2, column = 0, sticky = W+N)
         self.isYoloCheckBox = IntVar()
-        self.isYoloCheckBox.set(0)    
+        self.isYoloCheckBox.set(0)
         self.yoloCheckBox = Radiobutton(self.FileControlPanelFrame, variable=self.isYoloCheckBox, value=1, text="Yolo Format")
         self.yoloCheckBox.grid(row = 3, column = 0, sticky = N)
         self.kittiCheckBox = Radiobutton(self.FileControlPanelFrame, variable=self.isYoloCheckBox, value=0, text="KITTI Format")
         self.kittiCheckBox.grid(row = 3, column = 1, sticky = N)
-       
-            
-            
-        
+
+
+
+
         # control panel for image navigation
         self.ctrPanel = Frame(self.frame)
         self.ctrPanel.grid(row = 6, column = 0, columnspan = 2, sticky = W+N)
@@ -380,14 +382,14 @@ class Euclid():
         self.mainPanel.create_image(0, 0, image = self.tkimg, anchor=NW)
         self.progLabel.config(text = "Progress: [ %04d / %04d ]" %(self.cur, self.total))
         self.updateStatus("Loaded file " + imagepath)
-        
-        if self.tkimg.width() > 1024 or self.tkimg.height() > 1024:
+
+        if self.tkimg.width() > 2048 or self.tkimg.height() > 2048:
             tkMessageBox.showwarning("Too large image", message = "Image dimensions not suited for Deep Learning frameworks!")
-            
+
         # load labels
         self.clearBBox()
         self.classLabelList = []
-        lastPartFileName, lastPartFileExtension = os.path.splitext(os.path.split(imagepath)[-1])      
+        lastPartFileName, lastPartFileExtension = os.path.splitext(os.path.split(imagepath)[-1])
         self.imagename = lastPartFileName
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
@@ -397,18 +399,18 @@ class Euclid():
                 for (i, line) in enumerate(f):
                     bbox_cnt = len(line)
                     tmp = [elements.strip() for elements in line.split()]
-                    
+
                     if(len(tmp) > 5):
                         self.currLabelMode='KITTI'
                         bbTuple = (int(float(tmp[4])),int(float(tmp[5])), int(float(tmp[6])),int(float(tmp[7])) )
                         self.classLabelList.append(CLASSES.index(tmp[0]))
-                        
+
                     else:
                         self.currLabelMode='YOLO'
-                        bbTuple = self.GetBoundariesFromYoloFile(float(tmp[1]),float(tmp[2]), float(tmp[3]),float(tmp[4]), 
+                        bbTuple = self.GetBoundariesFromYoloFile(float(tmp[1]),float(tmp[2]), float(tmp[3]),float(tmp[4]),
                                                             self.tkimg.width(), self.tkimg.height() )
-                        self.classLabelList.append(tmp[0])                        
-                    
+                        self.classLabelList.append(tmp[0])
+
 
                     self.bboxList.append( bbTuple  )
                     #color set
@@ -429,10 +431,10 @@ class Euclid():
         bottomRightX = (int)(centerX*imageWidth + (width*imageWidth)/2)
         bottomRightY = (int)(centerY*imageHeight + (height*imageHeight)/2)
         return topLeftX, topLeftY, bottomRightX, bottomRightY
-    
+
 
     def convert2Yolo(self, image, boxCoords):
-        
+
         invWidth = 1./image[0]
         invHeight = 1./image[1]
         x = invWidth * (boxCoords[0] + boxCoords[2])/2.0
@@ -440,28 +442,28 @@ class Euclid():
         boxWidth = invWidth * (boxCoords[2] - boxCoords[0])
         boxHeight = invHeight * (boxCoords[3] - boxCoords[1])
         return (x,y,boxWidth,boxHeight)
-                
+
 
     def saveLabel(self):
-        if self.labelfilename == '': 
-            return            
+        if self.labelfilename == '':
+            return
         if(len(self.bboxList) == 0):
             return
         if self.isYoloCheckBox.get() == 0:
             self.currLabelMode = 'KITTI'
         else:
             self.currLabelMode = 'YOLO'
-            
+
         if self.currLabelMode == 'KITTI':
             with open(self.labelfilename, 'w') as f:
                 labelCnt=0
-                ##class1 0 0 0 x1,y1,x2,y2 0,0,0 0,0,0 0 0  
+                ##class1 0 0 0 x1,y1,x2,y2 0,0,0 0,0,0 0 0
                 # fields ignored by DetectNet: alpha, scenario, roty, occlusion, dimensions, location.
                 for bbox in self.bboxList:
-                    f.write('%s' %CLASSES[self.classLabelList[labelCnt]])               
+                    f.write('%s' %CLASSES[self.classLabelList[labelCnt]])
                     f.write(' 0.0 0 0.0 ')
                     #f.write(str(bbox[0])+' '+str(bbox[1])+' '+str(bbox[2])+' '+str(bbox[3]))
-                    f.write('%.2f %.2f %.2f %.2f' % (bbox[0], bbox[1], bbox[2], bbox[3]))                 
+                    f.write('%.2f %.2f %.2f %.2f' % (bbox[0], bbox[1], bbox[2], bbox[3]))
                     f.write(' 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 ')
                     f.write('\n')
                     labelCnt = labelCnt+1
@@ -470,13 +472,13 @@ class Euclid():
             with open(self.labelfilename, 'w') as f:
                 labelCnt=0
                 ##class1 center_box_x_ratio center_box_y_ratio width_ratio height_ratio
-                for bbox in self.bboxList:                
+                for bbox in self.bboxList:
                     yoloOut = self.convert2Yolo(
-                                [self.tkimg.width(), self.tkimg.height()], 
+                                [self.tkimg.width(), self.tkimg.height()],
                                 [bbox[0], bbox[1], bbox[2], bbox[3]]
                                 );
-                    f.write('%s' %self.classLabelList[labelCnt])               
-                    f.write(' %.7f %.7f %.7f %.7f' % (yoloOut[0], yoloOut[1], yoloOut[2], yoloOut[3]))                 
+                    f.write('%s' %self.classLabelList[labelCnt])
+                    f.write(' %.7f %.7f %.7f %.7f' % (yoloOut[0], yoloOut[1], yoloOut[2], yoloOut[3]))
                     f.write('\n')
                     #tkMessageBox.showinfo("Save Info", message = self.classLabelList[labelCnt])
                     labelCnt = labelCnt+1
@@ -484,7 +486,7 @@ class Euclid():
             self.AddFileToTrainingList(self.imagefilename);
         else:
             tkMessageBox.showerror("Labelling error", message = 'Unknown Label format')
-        
+
 
     def selectPointXY(self, event):
         self.handleMouseOrXKey(self.currentMouseX, self.currentMouseY)
@@ -508,7 +510,7 @@ class Euclid():
             self.listbox.insert(END, '(%d, %d) -> (%d, %d)[Class %d]' %(x1, y1, x2, y2 , self.currClassLabel))
             #color set
             currColor = '#%02x%02x%02x' % (self.redColor, self.greenColor, self.blueColor)
-            self.redColor = (self.redColor + 25) % 255         
+            self.redColor = (self.redColor + 25) % 255
             self.listbox.itemconfig(len(self.bboxIdList) - 1, fg = currColor)
         self.STATE['click'] = 1 - self.STATE['click']
 
@@ -521,7 +523,7 @@ class Euclid():
                 return
             if event.y > self.tkimg.height():
                 return
-                
+
             if self.hl:
                 self.mainPanel.delete(self.hl)
             self.hl = self.mainPanel.create_line(0, event.y, self.tkimg.width(), event.y, width = 2)
@@ -533,7 +535,7 @@ class Euclid():
                 self.mainPanel.delete(self.bboxId)
             #color set
             currColor = '#%02x%02x%02x' % (self.redColor, self.greenColor, self.blueColor)
-            self.blueColor = (self.blueColor + 35) % 255                
+            self.blueColor = (self.blueColor + 35) % 255
             self.bboxId = self.mainPanel.create_rectangle(self.STATE['x'], self.STATE['y'], \
                                                             event.x, event.y, \
                                                             width = 2, \
@@ -571,7 +573,7 @@ class Euclid():
         self.bboxList = []
 
     def prevImage(self, event = None):
-        self.saveLabel()    
+        self.saveLabel()
         if self.cur > 1:
             self.cur -= 1
             self.loadImageAndLabels()
@@ -598,9 +600,8 @@ class Euclid():
 
     def updateStatus(self, newStatus):
         self.statusText.set("Status: " + newStatus)
-    
+
 if __name__ == '__main__':
     root = Tk()
     tool = Euclid(root)
     root.mainloop()
-
